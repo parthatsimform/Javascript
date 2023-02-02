@@ -6,25 +6,33 @@ const btns=document.getElementsByTagName("button");
 const mc = document.getElementById("mc");
 const mr = document.getElementById("mr");
 
+function checkNaN(res) {
+    if (isNaN(res)) { 
+        output.value = "Syntax Error";
+    } else {
+        output.value = res;
+    }
+}
+
 Array.from(btns).forEach(btn => {
     btn.addEventListener("click", e => {
         switch (e.target.value || e.target.parentElement.value) {
             case "DEG":
                 process.innerHTML = output.value + " RAD to DEG";
-                output.value = output.value * 180 / 3.14159265359;
+                checkNaN(output.value * 180 / 3.14159265359);
                 e.target.value = "RAD";
                 e.target.innerHTML = e.target.value;
                 break;
             
             case "RAD":
                 process.innerHTML = output.value + " DEG to RAD";
-                output.value = output.value * 3.14159265359 / 180;
+                checkNaN(output.value * 3.14159265359 / 180);
                 e.target.value = "DEG";
                 e.target.innerHTML = e.target.value;
                 break;
             
             case "fe":
-                output.value = parseFloat(output.value).toExponential();
+                checkNaN(parseFloat(output.value).toExponential());
                 break;
 
             case "mc":
@@ -56,17 +64,17 @@ Array.from(btns).forEach(btn => {
             
             case "sin":
                 process.innerHTML = "sin(" + output.value + ")";
-                output.value = Math.sin(parseFloat(output.value));
+                checkNaN(Math.sin(parseFloat(output.value)));
                 break;
             
             case "cos":
                 process.innerHTML = "cos(" + output.value + ")";
-                output.value = Math.cos(parseFloat(output.value));
+                checkNaN(Math.cos(parseFloat(output.value)));
                 break;
             
             case "tan":
                 process.innerHTML = "tan(" + output.value + ")";
-                output.value = Math.tan(parseFloat(output.value));
+                checkNaN(Math.tan(parseFloat(output.value)));
                 break;
             
             case "function":
@@ -74,12 +82,12 @@ Array.from(btns).forEach(btn => {
             
             case "ceiling":
                 process.innerHTML = "⌈" + output.value + "⌉";
-                output.value = Math.ceil(parseFloat(output.value));
+                checkNaN(Math.ceil(output.value));
                 break;
             
             case "floor":
                 process.innerHTML = "⌊" + output.value + "⌋";
-                output.value = Math.floor(parseFloat(output.value));
+                checkNaN(Math.floor(output.value));
                 break;
             
             case "random":
@@ -121,7 +129,7 @@ Array.from(btns).forEach(btn => {
             
             case "cube":
                 process.innerHTML = output.value + "<sup>3</sup>";
-                output.value = Math.pow(output.value,3);
+                checkNaN(Math.pow(output.value, 3));
                 break;
                 
             case "clear":
@@ -156,17 +164,17 @@ Array.from(btns).forEach(btn => {
             
             case "square":
                 process.innerHTML = output.value + "<sup>2</sup>";
-                output.value *= output.value;
+                checkNaN(Math.pow(output.value, 2));
                 break;
             
             case "oneUpon":
                 process.innerHTML = "1/" + output.value;
-                output.value = 1 / output.value;
+                checkNaN(1 / output.value);
                 break;
             
             case "mod":
                 process.innerHTML = "|" + output.value + "|";
-                output.value = Math.abs(output.value);
+                checkNaN(Math.abs(output.value));
                 break;
             
             case "exp":
@@ -180,7 +188,7 @@ Array.from(btns).forEach(btn => {
                 break;
             
             case "modulo":
-                output.value += " mod ";
+                output.value += " % ";
                 break;
             
             case "squareRoot":
@@ -193,10 +201,13 @@ Array.from(btns).forEach(btn => {
             
             case "factorial":
                 let ff = 1;
+                process.innerHTML = output.value + "!";
+                if (isNaN(output.value)) {
+                    throw output.value = "Syntax Error";
+                }
                 for (i = 1; i <= output.value; i++) {
                     ff *= i;
                 }
-                process.innerHTML = output.value + "!";
                 output.value = ff;
                 break;
             
@@ -215,44 +226,51 @@ Array.from(btns).forEach(btn => {
                 break;
             
             case "loge":
-                process.innerHTML = "log<sub>e</sub>"+output.value;
-                output.value = Math.log(output.value);
+                process.innerHTML = "log<sub>e</sub>" + output.value;
+                checkNaN(Math.log(output.value));
                 break;
             
             case "ln":
                 process.innerHTML = "ln" + output.value;
-                output.value = Math.log2(output.value);
+                checkNaN(Math.log2(output.value));
                 break;
             
             case "invert":
                 output.value = -output.value;
                 break;
-
-            case "=":
-                process.innerHTML = output.value;
-                if (output.value.toString().includes("mod")) {
-                    op1 = output.value.toString().split(" mod ")[0];
-                    op2 = output.value.toString().split(" mod ")[1];
-                    output.value = op1 % op2;
-                } else if (output.value.toString().includes("3√")) {
-                    op = output.value.toString().split("√")[1];
-                    output.value = Math.cbrt(Function("return "+op)());
-                } else if (output.value.toString().includes("√")) {
-                    op = output.value.toString().split("√")[1];
-                    output.value = Math.sqrt(Function("return "+op)());
-                } else if (output.value.toString().includes("e**")) {
-                    const res = output.value.toString().replace(/e/g, "2.718");
-                    output.value = Function("return " + res)();
-                }
-                else{
-                    process.innerHTML = output.value;
-                    output.value = eval(output.value);
-                }
-                break;
             
             case ".":
                 if (output.value.toString().indexOf(".") == -1) {
                     output.value += ".";
+                }
+                break; 
+
+            case "=":
+                try {
+                    process.innerHTML = output.value;
+                    if (output.value.toString().includes("%")) {
+                        op1 = output.value.toString().split(" % ")[0];
+                        op2 = output.value.toString().split(" % ")[1];
+                        checkNaN(op1 % op2);
+                    } else if (output.value.toString().includes("3√")) {
+                        op = output.value.toString().split("√")[1];
+                        checkNaN(Math.cbrt(Function("return " + op)()));
+                    } else if (output.value.toString().includes("√")) {
+                        op = output.value.toString().split("√")[1];
+                        checkNaN(Math.sqrt(Function("return " + op)()));
+                    } else if (output.value.toString().includes("e**")) {
+                        const res = output.value.toString().replace(/e/g, "2.718");
+                        checkNaN(Function("return " + res)());
+                    }else{
+                        process.innerHTML = output.value;
+                        if (output.value.toString() == eval(output.value).toString()) {
+                            output.value = "Syntax Error";
+                        } else {
+                            output.value = parseFloat(eval(output.value).toFixed(6));
+                        }
+                    }
+                } catch (e) {
+                    output.value = "Syntax Error";
                 }
                 break;
             
