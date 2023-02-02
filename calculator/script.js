@@ -203,12 +203,13 @@ Array.from(btns).forEach(btn => {
                 let ff = 1;
                 process.innerHTML = output.value + "!";
                 if (isNaN(output.value)) {
-                    throw output.value = "Syntax Error";
+                    output.value = "Syntax Error";
+                } else {
+                    for (i = 1; i <= output.value; i++) {
+                        ff *= i;
+                    }
+                    output.value = ff;
                 }
-                for (i = 1; i <= output.value; i++) {
-                    ff *= i;
-                }
-                output.value = ff;
                 break;
             
             case "raiseTo":
