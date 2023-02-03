@@ -1,0 +1,157 @@
+body{
+    padding: 0 5%;
+    background-color: #faebc3;
+}
+.navbar{
+    background-color: #faebc3;
+    margin: 10px 0;
+    position: sticky;
+    top: 0;
+    border-bottom: black 1px solid;
+}
+.navbar-brand{
+    font-size: 2rem;
+}
+#home{
+    margin: 10% 0;
+    font-size: 20px;
+}
+#header{
+    margin: 5% 0;
+    display: flex;
+}
+.left-header{
+    width: 50%;
+}
+.left-header h1{
+    font-size: 3rem;
+    margin-bottom: 30px;
+}
+#headerbtn{
+    background-color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 600;
+}
+#headerbtn a{
+    text-decoration: none;
+    color: black;
+}
+.right-header{
+    width: 50%;
+    text-align: center;
+}
+.homecontent{
+    margin: 5% 0;
+}
+#about{
+    margin: 10% 0;
+}
+#about h2{
+    font-size: 3rem;
+    text-align: center;
+    text-decoration: underline;
+    margin-bottom: 3%;
+}
+#about p{
+    font-size: 20px;
+    text-indent: 50px;
+}
+#images{
+    display: none;
+    margin: 10% 0;
+}
+#images h2{
+    font-size: 3rem;
+    text-align: center;
+    text-decoration: underline;
+    margin-bottom: 3%;
+}
+.slider{
+    width: 100%;
+    /* display: flex; */
+    text-align: center;
+}
+.imgslide{
+    display: none;
+}
+.imgslide img{
+    width: 50%;
+}
+.leftaerrow{
+    text-decoration: none;
+    color: gray;
+    font-size: 50px;
+}
+.rightaerrow{
+    text-decoration: none;
+    font-size: 50px;
+    color: gray;
+}
+#services{
+    display: none;
+    margin: 10% 0;
+}
+#services h2{
+    font-size: 3rem;
+    text-align: center;
+    text-decoration: underline;
+    margin-bottom: 3%;
+}
+.servicediv{
+    display: flex;
+}
+.leftservice{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+.leftservice img{
+    margin: 0 auto;
+    height: 300px;
+}
+.rightservice li{
+    font-size: 20px;
+    list-style: square;
+    margin: 10px 0;
+}
+#footer{
+    padding: 2% 0;
+    text-align: center;
+}
+
+@media (max-width: 720px) {
+    #header{
+        display: block;
+    }
+    .left-header{
+        width: 100%;
+    }
+    .right-header{
+        margin-top: 20px;
+        width: 100%;
+    }
+    .servicediv{
+        display: block;
+    }
+    .leftservice{
+        display: block;
+        align-items: center;
+    }
+    .leftservice img{
+        margin: 20px 0;
+        height: 200px;
+    }
+}
+
+@media (max-width: 420px) {
+    #headerbtn{
+        display: block;
+        margin: inherit auto;
+        padding: 10px 30px;
+    }
+}
