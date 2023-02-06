@@ -2,7 +2,7 @@ home = document.getElementById("home");
 about = document.getElementById("about");
 images = document.getElementById("images");
 services = document.getElementById("services");
-content=document.getElementsByClassName("content");
+content = document.getElementsByClassName("content");
 selected = document.getElementsByClassName("navbar");
 
 window.addEventListener("load", (e) => {            //When window load after refresh, it will show content based what URL is.
@@ -36,6 +36,7 @@ function fetchContent(e) {
             home.style.display = "none";
             about.style.display = "none";
             images.style.display = "block";
+            showSlide(slideindex);              //to display only one image at a time for first time
             services.style.display = "none";
             break;
         
