@@ -77,9 +77,15 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 2s ease 0s;
 }
 .imgslide{
-
+    animation-name: fade;
+    animation-duration: 1s;
+}
+@keyframes fade{
+    from {opacity: 0.3;}
+    to {opacity: 1;}
 }
 .imgslide img{
     max-height: 435px;
@@ -99,7 +105,6 @@ body{
     margin-left: 2%;
 }
 #services{
-    display: none;
     margin: 10% 0;
 }
 #services h2{
@@ -173,5 +178,6 @@ body{
     .rightaerrow{
         color: white;
         margin-left: -15%;
+        z-index: 1;
     }
 }
