@@ -1,13 +1,7 @@
-let productForm = document.getElementById("productForm");
-const allProducts = document.getElementById("allProducts");
-const addProduct = document.getElementById("addProduct");
-const productlist = document.getElementById("product-list");
-selected = document.getElementsByClassName("navbar");
+const selected = document.getElementsByClassName("navbar");
 const content = document.getElementById("content");
-const editbtn = document.getElementsByClassName("editbtn");
 
 let products = JSON.parse(localStorage.getItem("products")) || [];
-
 
 window.addEventListener("load", async (e) => {
     const res = await fetch(routes[e.target.location.hash]);
@@ -76,8 +70,10 @@ function addNewProduct() {
 }
 
 function showData() {
+    const productlist = document.getElementById("product-list");
+    const searchinput = document.getElementById("searchinput");
     let data = "";
-    products.length < 1 ? data = `<tr><td colspan="6" class="producterror">No Products Available!</td></tr>` : (
+    products.length == 0 ? data = `<tr><td colspan="6" class="producterror">No Products Available!</td></tr>` : (
         products.map((product) => {
             data += `<tr>
                 <td>${product.id}</td>
@@ -89,7 +85,30 @@ function showData() {
                 <td><button type="button" class="deletebtn" onclick="deleteproduct(this)">Delete</button></td>
             </tr>`;
     }))
-    document.getElementById("product-list").innerHTML = data;
+    productlist.innerHTML = data;
+    searchinput.addEventListener("keyup", (e) => {
+        console.log(e.target.value);
+        data = "";
+        let searchproduct = [...products]
+        searchproduct = searchproduct.filter(product => product.id == e.target.value);
+        if (e.target.value == "") {
+            searchproduct = products;
+        }
+        searchproduct.length == 0 ? data = `<tr><td colspan="6" class="producterror">No Products Available!</td></tr>` : (
+            searchproduct.map((product) => {
+                data += `<tr>
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+                <td>Image</td>
+                <td>${product.price}</td>
+                <td>${product.description}</td>
+                <td><button type="button" class="editbtn" onclick="editproduct(this)">Edit</button></td>
+                <td><button type="button" class="deletebtn" onclick="deleteproduct(this)">Delete</button></td>
+            </tr>`;
+            })
+        )
+        productlist.innerHTML = data;
+    })
 }
 
 function deleteproduct(e) {
