@@ -51,10 +51,11 @@ Array.from(selected).forEach(element => {
 })
 
 function addNewProduct() {
-    document.getElementById("productForm").addEventListener("submit", async(e) => {
+    document.getElementById("productForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         let productID = e.target.productID.value;
         let productName = e.target.productName.value;
+        let productImage= e.target.productImage.files[0];
         let productPrice = e.target.productPrice.value;
         let productDescription = e.target.productDescription.value;
         const available = await products.find(product => product.id == productID);
@@ -62,6 +63,7 @@ function addNewProduct() {
             window.alert("Product with ID=" + productID + " already exists. Please enter a different product ID.");
             e.target.productID.focus();
         } else {
+            imagehandler(productImage,productID);
             let product = {
                 id: productID,
                 name: productName,
@@ -72,6 +74,14 @@ function addNewProduct() {
             localStorage.setItem("products", JSON.stringify(products));
             window.location.href = "/";
         }
+    })
+}
+
+function imagehandler(image,id) {
+    const reader = new FileReader();
+    reader.readAsDataURL(image);
+    reader.addEventListener("load",() => {
+        localStorage.setItem(id,reader.result);
     })
 }
 
@@ -145,7 +155,7 @@ function displaydata(products) {
         data += `<tr>
         <td>${product.id}</td>
         <td>${product.name}</td>
-        <td>Image</td>
+        <td><img src=${localStorage.getItem(product.id)} class="imgdisplay"></td>
         <td>${product.price}</td>
         <td>${product.description}</td>
         <td><button type="button" class="editbtn" onclick="editproduct(${product.id})">Edit</button></td>
@@ -160,6 +170,7 @@ function deleteproduct(id) {
     copyproducts = copyproducts.filter(cp => cp.id != id);
     products = copyproducts;
     localStorage.setItem("products", JSON.stringify(products));
+    localStorage.removeItem(id);
     window.location.href = "/";
 }
 
@@ -184,6 +195,10 @@ const editfunction = (pid) => {
             products[pid].name = editproduct.productName.value;
             products[pid].price = editproduct.productPrice.value;
             products[pid].description = editproduct.productDescription.value;
+
+            if (editproduct.elements.productImage.value) {
+                imagehandler(editproduct.elements.productImage.files[0],editproduct.productID.value);
+            }
             localStorage.setItem("products", JSON.stringify(products));
             window.location.href = "/";
         })
