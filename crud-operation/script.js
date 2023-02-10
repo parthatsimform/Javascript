@@ -51,79 +51,121 @@ Array.from(selected).forEach(element => {
 })
 
 function addNewProduct() {
-    document.getElementById("productForm").addEventListener("submit", (e) => {
+    document.getElementById("productForm").addEventListener("submit", async(e) => {
         e.preventDefault();
         let productID = e.target.productID.value;
         let productName = e.target.productName.value;
         let productPrice = e.target.productPrice.value;
         let productDescription = e.target.productDescription.value;
-        let product = {
-            id: productID,
-            name: productName,
-            price: productPrice,
-            description: productDescription
+        const available = await products.find(product => product.id == productID);
+        if (available) {
+            window.alert("Product with ID=" + productID + " already exists. Please enter a different product ID.");
+            e.target.productID.focus();
+        } else {
+            let product = {
+                id: productID,
+                name: productName,
+                price: productPrice,
+                description: productDescription
+            }
+            products.push(product);
+            localStorage.setItem("products", JSON.stringify(products));
+            window.location.href = "/";
         }
-        products.push(product);
-        localStorage.setItem("products", JSON.stringify(products));
-        window.location.href = "/";
     })
 }
 
 function showData() {
-    const productlist = document.getElementById("product-list");
+    displaydata(products);
+    filterbyid();
+    sortmethods();
+}
+
+function filterbyid() {
     const searchinput = document.getElementById("searchinput");
-    let data = "";
-    products.length == 0 ? data = `<tr><td colspan="6" class="producterror">No Products Available!</td></tr>` : (
-        products.map((product) => {
-            data += `<tr>
-                <td>${product.id}</td>
-                <td>${product.name}</td>
-                <td>Image</td>
-                <td>${product.price}</td>
-                <td>${product.description}</td>
-                <td><button type="button" class="editbtn" onclick="editproduct(this)">Edit</button></td>
-                <td><button type="button" class="deletebtn" onclick="deleteproduct(this)">Delete</button></td>
-            </tr>`;
-    }))
-    productlist.innerHTML = data;
     searchinput.addEventListener("keyup", (e) => {
-        console.log(e.target.value);
-        data = "";
         let searchproduct = [...products]
         searchproduct = searchproduct.filter(product => product.id == e.target.value);
         if (e.target.value == "") {
+            console.log("called");
             searchproduct = products;
         }
-        searchproduct.length == 0 ? data = `<tr><td colspan="6" class="producterror">No Products Available!</td></tr>` : (
-            searchproduct.map((product) => {
-                data += `<tr>
-                <td>${product.id}</td>
-                <td>${product.name}</td>
-                <td>Image</td>
-                <td>${product.price}</td>
-                <td>${product.description}</td>
-                <td><button type="button" class="editbtn" onclick="editproduct(this)">Edit</button></td>
-                <td><button type="button" class="deletebtn" onclick="deleteproduct(this)">Delete</button></td>
-            </tr>`;
-            })
-        )
-        productlist.innerHTML = data;
+        displaydata(searchproduct);
     })
 }
 
-function deleteproduct(e) {
-    p = e.parentElement.parentElement.children[0].textContent;
+function sortmethods() {
+    let sortdropdown = document.getElementById("sortdropdown");
+    let options = document.getElementsByClassName("dropdown-item");
+    let increasing = document.getElementById("increasing");
+    let decreasing = document.getElementById("decreasing");
+
+    Array.from(options).forEach(option => {
+        option.addEventListener("click", (e) => {
+            sortdropdown.innerHTML = e.target.innerHTML;
+            decreasing.classList.remove("activesortarrow");
+            increasing.classList.add("activesortarrow");
+            let sortproduct = [...products];
+            let newsort=[...products];
+            switch (e.target.id) {
+                case "sortbyid":
+                    sortproduct.sort((a, b) => a.id - b.id);
+                    break;
+                case "sortbyname":
+                    sortproduct.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case "sortbyprice":
+                    sortproduct.sort((a, b) => a.price - b.price);
+                    break;
+            }
+            displaydata(sortproduct);
+            
+            decreasing.addEventListener("click", (event) => {
+                decreasing.classList.add("activesortarrow");
+                increasing.classList.remove("activesortarrow");
+                sortproduct=sortproduct.reverse();
+                displaydata(sortproduct);
+            })
+            
+            increasing.addEventListener("click", (e) => {
+                decreasing.classList.remove("activesortarrow");
+                increasing.classList.add("activesortarrow");
+                sortproduct=sortproduct.reverse();
+                displaydata(sortproduct);
+            })
+        })
+    })
+}
+
+function displaydata(products) {
+    const productlist = document.getElementById("product-list");
+    let data = "";
+    products.length == 0 ? data = `<tr><td colspan="6" class="producterror">No Products Available!</td></tr>` : (
+    products.map((product) => {
+        data += `<tr>
+        <td>${product.id}</td>
+        <td>${product.name}</td>
+        <td>Image</td>
+        <td>${product.price}</td>
+        <td>${product.description}</td>
+        <td><button type="button" class="editbtn" onclick="editproduct(${product.id})">Edit</button></td>
+        <td><button type="button" class="deletebtn" onclick="deleteproduct(${product.id})">Delete</button></td>
+        </tr>`;
+    }))
+    productlist.innerHTML = data;
+}
+
+function deleteproduct(id) {
     let copyproducts = [...products];
-    copyproducts = copyproducts.filter(cp => cp.id !== p);
+    copyproducts = copyproducts.filter(cp => cp.id != id);
     products = copyproducts;
     localStorage.setItem("products", JSON.stringify(products));
     window.location.href = "/";
 }
 
-function editproduct(e) {
+function editproduct(id) {
     window.location.hash = "#editProduct";
-    p = e.parentElement.parentElement.children[0].textContent;
-    let p_id = products.findIndex(product => product.id == p);
+    let p_id = products.findIndex(product => product.id == id);
     localStorage.setItem("editProductId", p_id);                //store edit-product-id in local storage to be able retrieve when reload
     editfunction(p_id);
 }

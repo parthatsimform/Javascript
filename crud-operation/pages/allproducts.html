@@ -1,9 +1,25 @@
 <section id="allProductsSection">
     <h2 class="allproductsHeading">Products</h2>
-    <span class="search">
-        <label for="searchinput" class="form-label">Search By ProductID: </label>
-        <input type="number" id="searchinput" class="form-control" name="searchinput">
-    </span>
+    <div class="filter-sort">
+        <span class="search">
+            <input type="number" id="searchinput" class="form-control" name="searchinput" placeholder="Search By ProductID">
+        </span>
+        <span class="sort">
+            <div class="dropdown">
+                <label for="sortdropdown" class="form-label">Sort By: </label>
+                <button name="sortdropdown" id="sortdropdown" class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Select
+                </button>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-item" id="sortbyid">Product ID</li>
+                    <li class="dropdown-item" id="sortbyname">Product Name</li>
+                    <li class="dropdown-item" id="sortbyprice">Price</li>
+                </ul>
+                <button id="increasing" class="sortarrow"><i class="fa-solid fa-arrow-up-long"></i></button>
+                <button id="decreasing" class="sortarrow"><i class="fa-solid fa-arrow-down-long"></i></button>
+            </div> 
+        </span>
+    </div>
     <table id="product-table">
         <thead>
             <tr>
