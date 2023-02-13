@@ -53,28 +53,58 @@ Array.from(selected).forEach(element => {
 function addNewProduct() {
     document.getElementById("productForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-        let productID = e.target.productID.value;
-        let productName = e.target.productName.value;
-        let productImage= e.target.productImage.files[0];
-        let productPrice = e.target.productPrice.value;
-        let productDescription = e.target.productDescription.value;
-        const available = await products.find(product => product.id == productID);
-        if (available) {
-            window.alert("Product with ID=" + productID + " already exists. Please enter a different product ID.");
-            e.target.productID.focus();
-        } else {
-            imagehandler(productImage,productID);
-            let product = {
-                id: productID,
-                name: productName,
-                price: productPrice,
-                description: productDescription
+        if (validateForm(e.target)) {
+            let productID = e.target.productID.value;
+            let productName = e.target.productName.value;
+            let productImage= e.target.productImage.files[0];
+            let productPrice = e.target.productPrice.value;
+            let productDescription = e.target.productDescription.value;
+            const available = await products.find(product => product.id == productID);
+            if (available) {
+                window.alert("Product with ID=" + productID + " already exists. Please enter a different product ID.");
+                e.target.productID.focus();
+            } else {
+                imagehandler(productImage,productID);
+                let product = {
+                    id: productID,
+                    name: productName,
+                    price: productPrice,
+                    description: productDescription
+                }
+                products.push(product);
+                localStorage.setItem("products", JSON.stringify(products));
+                window.location.href = "/";
             }
-            products.push(product);
-            localStorage.setItem("products", JSON.stringify(products));
-            window.location.href = "/";
         }
     })
+}
+
+function validateForm(form) {
+    if (window.location.hash=="#addProduct" && form.productID.value == "") {
+        form.productID.style.border="1px solid red";
+        form.productID.setAttribute("placeholder", "Enter Product ID");
+        return false;
+    }
+    if (form.productName.value == "") {
+        form.productName.style.border="1px solid red";
+        form.productName.setAttribute("placeholder", "Enter Product Name");
+        return false;
+    }
+    if (window.location.hash=="#addProduct" && form.productImage.value == "") {
+        form.productImage.style.border="1px solid red";
+        return false;
+    }
+    if (form.productPrice.value == "") {
+        form.productPrice.style.border="1px solid red";
+        form.productPrice.setAttribute("placeholder", "Enter Product Price");
+        return false;
+    }
+    if (form.productDescription.value == "") {
+        form.productDescription.style.border="1px solid red";
+        form.productDescription.setAttribute("placeholder", "Enter Product Description");
+        return false;
+    }
+    return true;
 }
 
 function imagehandler(image,id) {
@@ -170,7 +200,7 @@ function deleteproduct(id) {
     products = copyproducts;
     localStorage.setItem("products", JSON.stringify(products));
     localStorage.removeItem(id);
-    window.location.href = "/";
+    showData();
 }
 
 function editproduct(id) {
@@ -192,16 +222,18 @@ const editfunction = (pid) => {
 
         editproduct.addEventListener("submit", (e) => {             
             e.preventDefault();
-            products[pid].id = editproduct.productID.value;
-            products[pid].name = editproduct.productName.value;
-            products[pid].price = editproduct.productPrice.value;
-            products[pid].description = editproduct.productDescription.value;
+            if (validateForm(e.target)) {
+                products[pid].id = editproduct.productID.value;
+                products[pid].name = editproduct.productName.value;
+                products[pid].price = editproduct.productPrice.value;
+                products[pid].description = editproduct.productDescription.value;
 
-            if (editproduct.elements.productImage.value) {
-                imagehandler(editproduct.elements.productImage.files[0],editproduct.productID.value);
+                if (editproduct.elements.productImage.value) {
+                    imagehandler(editproduct.elements.productImage.files[0],editproduct.productID.value);
+                }
+                localStorage.setItem("products", JSON.stringify(products));
+                window.location.href = "/";
             }
-            localStorage.setItem("products", JSON.stringify(products));
-            window.location.href = "/";
         })
     }
 }
