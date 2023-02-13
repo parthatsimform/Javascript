@@ -97,7 +97,6 @@ function filterbyid() {
         let searchproduct = [...products]
         searchproduct = searchproduct.filter(product => product.id == e.target.value);
         if (e.target.value == "") {
-            console.log("called");
             searchproduct = products;
         }
         displaydata(searchproduct);
@@ -178,12 +177,14 @@ function editproduct(id) {
     window.location.hash = "#editProduct";
     let p_id = products.findIndex(product => product.id == id);
     localStorage.setItem("editProductId", p_id);                //store edit-product-id in local storage to be able retrieve when reload
-    editfunction(p_id);
+    if (p_id) {
+        editfunction(p_id);
+    }
 }
 
 const editfunction = (pid) => {
-    setTimeout(() => {                                          //setTimeout to wait for get the form id
-        let editproduct = document.getElementById("editproductForm");
+    let editproduct = document.getElementById("editproductForm");
+    if (editproduct) {
         editproduct.elements.productID.value = products[pid].id;
         editproduct.elements.productName.value = products[pid].name;
         editproduct.elements.productPrice.value = products[pid].price;
@@ -202,5 +203,5 @@ const editfunction = (pid) => {
             localStorage.setItem("products", JSON.stringify(products));
             window.location.href = "/";
         })
-    }, 100)
+    }
 }
