@@ -14,6 +14,22 @@ function checkNaN(res) {
     }
 }
 
+document.addEventListener("keydown", e => {
+    if (!isNaN(e.key) || e.key === "/" || e.key === "*" || e.key === "+" || e.key === "-" || e.key === ".") {
+        process.innerHTML = "";
+        if (output.value === "0") {
+            output.value = "";
+        }
+        output.value += e.key;
+    } else if (e.key === "Backspace") {
+        output.value = output.value.toString().substring(0, output.value.length - 1);
+        process.innerHTML = "";
+    } else if (e.key === "Enter") {
+        process.innerHTML = output.value;
+        output.value = parseFloat(eval(output.value).toFixed(6));
+    }
+})
+
 Array.from(btns).forEach(btn => {
     btn.addEventListener("click", e => {
         switch (e.target.value || e.target.parentElement.value) {
