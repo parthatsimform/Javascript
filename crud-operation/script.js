@@ -50,13 +50,26 @@ Array.from(selected).forEach(element => {
     })
 })
 
+const showimg = e => {
+    const img = e.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(img);
+    reader.onload = e => {
+        document.getElementById("selectedimg").src = e.target.result;
+    }
+    document.getElementById("productImage").style.display = "none";
+    document.getElementById("selectedimg").addEventListener("click", () => {
+        document.getElementById("productImage").click();
+    })
+}
+
 function addNewProduct() {
     document.getElementById("productForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         if (validateForm(e.target)) {
             let productID = e.target.productID.value;
             let productName = e.target.productName.value;
-            let productImage= e.target.productImage.files[0];
+            let productImage = e.target.productImage.files[0];
             let productPrice = e.target.productPrice.value;
             let productDescription = e.target.productDescription.value;
             const available = await products.find(product => product.id == productID);
@@ -64,22 +77,22 @@ function addNewProduct() {
                 window.alert("Product with ID=" + productID + " already exists. Please enter a different product ID.");
                 e.target.productID.focus();
             } else {
-                imagehandler(productImage,productID);
-                let product = {
-                    id: productID,
-                    name: productName,
-                    price: productPrice,
-                    description: productDescription
+                if (confirm("Are you sure you want to add this product?")) {
+                    imagehandler(productImage,productID);
+                    let product = {
+                        id: productID,
+                        name: productName,
+                        price: productPrice,
+                        description: productDescription
+                    }
+                    products.push(product);
+                    localStorage.setItem("products", JSON.stringify(products));
+                    window.location.href = "/";
                 }
-                products.push(product);
-                localStorage.setItem("products", JSON.stringify(products));
-                window.location.href = "/";
             }
         }
     })
 }
-
-
 
 function validateForm(form) {
     if (window.location.hash=="#addProduct" && form.productID.value == "") {
@@ -129,11 +142,12 @@ function validateForm(form) {
     return true;
 }
 
-function imagehandler(image,id) {
+function imagehandler(image, id) {
     const reader = new FileReader();
     reader.readAsDataURL(image);
-    reader.addEventListener("load",() => {
-        localStorage.setItem(id,reader.result);
+    reader.addEventListener("load", () => {
+        localStorage.setItem(id, reader.result);
+        document.getElementById("selectedimg").src = reader.result;
     })
 }
 
@@ -217,12 +231,14 @@ function displaydata(products) {
 }
 
 function deleteproduct(id) {
-    let copyproducts = [...products];
-    copyproducts = copyproducts.filter(cp => cp.id != id);
-    products = copyproducts;
-    localStorage.setItem("products", JSON.stringify(products));
-    localStorage.removeItem(id);
-    showData();
+    if (confirm("Are you sure you want to delete this product?")) {
+        let copyproducts = [...products];
+        copyproducts = copyproducts.filter(cp => cp.id != id);
+        products = copyproducts;
+        localStorage.setItem("products", JSON.stringify(products));
+        localStorage.removeItem(id);
+        showData();
+    }
 }
 
 function editproduct(id) {
@@ -241,16 +257,19 @@ const editfunction = (pid) => {
         editproduct.elements.productName.value = products[pid].name;
         editproduct.elements.productPrice.value = products[pid].price;
         editproduct.elements.productDescription.value = products[pid].description;
-
+        editproduct.selectedimg.src = localStorage.getItem(products[pid].id);
+        editproduct.selectedimg.addEventListener("click", () => {
+            editproduct.productImage.click();
+        });
+     
         editproduct.addEventListener("submit", (e) => {             
             e.preventDefault();
-            if (validateForm(e.target)) {
+            if (validateForm(e.target) && confirm("Are you sure you want to update this product?")) {
                 products[pid].id = editproduct.productID.value;
                 products[pid].name = editproduct.productName.value;
                 products[pid].price = editproduct.productPrice.value;
                 products[pid].description = editproduct.productDescription.value;
-
-                if (editproduct.elements.productImage.value) {
+                if (editproduct.elements.productImage.files[0]) {
                     imagehandler(editproduct.elements.productImage.files[0],editproduct.productID.value);
                 }
                 localStorage.setItem("products", JSON.stringify(products));
